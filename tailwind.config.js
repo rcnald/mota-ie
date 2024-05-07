@@ -25,6 +25,30 @@ export default {
       fontFamily: {
         montserrat: '"Montserrat", sans-serif',
       },
+      fontSize: {
+        'hero-title-clamp': 'clamp(3rem, 2.4rem + 1.5vw, 3.75rem)',
+      },
+      backgroundImage: {
+        'hero-image': 'url("./src/assets/hero-background.jpg")',
+        'hero-image-mobile': 'url("./src/assets/hero-background-mobile.jpg")',
+        'benefits-image': 'url("./src/assets/benefits-wave.svg")',
+      },
+      keyframes: {
+        pulsing: {
+          '0%': {
+            'box-shadow': '0 0 0 0 #F5B700',
+          },
+          '70%': {
+            'box-shadow': '0 0 0 10px rgba(0, 0, 0, 0)',
+          },
+          '100%': {
+            'box-shadow': '0 0 0 0 rgba(0, 0, 0, 0)',
+          },
+        },
+      },
+      animation: {
+        pulsing: 'pulsing 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
     },
   },
   plugins: [],
