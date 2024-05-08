@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import { cn } from '../../../../lib/utils'
 
 interface BenefitIconProps {
-  icon: React.ElementType
+  icon: React.FC<React.SVGProps<SVGSVGElement>>
 }
 
 interface BenefitTitleProps {
@@ -51,19 +51,17 @@ export function BenefitItem({ children }: BenefitItemProps) {
 export function BenefitIcon({ icon: Icon }: BenefitIconProps) {
   return (
     <span className="flex w-fit rounded-[0.625rem] p-5 group-odd:bg-accent-900 group-odd:text-neutral-50 group-even:bg-brand-400 group-even:text-brand-200">
-      <Icon width={40} height={40} />
+      <Icon width={40} height={40} aria-hidden />
     </span>
   )
 }
 
 export function BenefitTitle({ children }: BenefitTitleProps) {
-  const titleAsArray = children.split(' ')
-  const titleLastWordIndex = titleAsArray.length - 1
-  const titleLastWord = titleAsArray[titleLastWordIndex]
-  const titleWithOutLastWord = titleAsArray.reduce((acc, word, index) => {
-    if (titleLastWordIndex !== index) return (acc += `${word} `)
-
-    return acc
+  const titleWords = children.split(' ')
+  const titleLastWordIndex = titleWords.length - 1
+  const titleLastWord = titleWords[titleLastWordIndex]
+  const titleWithOutLastWord = titleWords.reduce((acc, word) => {
+    return titleLastWord !== word ? (acc += `${word} `) : acc
   }, '')
 
   return (
