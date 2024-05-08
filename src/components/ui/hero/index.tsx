@@ -2,8 +2,8 @@ import {
   Clock,
   Headset,
   Lightbulb,
-  Menu as MenuIcon,
   ShieldCheck,
+  Menu as menuIcon,
 } from 'lucide-react'
 import Logo from '../../../assets/logo.svg'
 import { Button } from '../button'
@@ -14,7 +14,14 @@ import {
   BenefitItem,
   BenefitTitle,
 } from './benefit'
-import { Menu, MenuContent, MenuItem, MenuTrigger } from './menu'
+import {
+  Menu,
+  MenuContent,
+  MenuIcon,
+  MenuItem,
+  MenuLabel,
+  MenuTrigger,
+} from './menu'
 
 export function Hero() {
   return (
@@ -24,7 +31,8 @@ export function Hero() {
           <img src={Logo} alt="" />
           <Menu>
             <MenuTrigger>
-              <MenuIcon className="text-brand-400 sm:hidden" />
+              <MenuLabel>Navegação</MenuLabel>
+              <MenuIcon icon={menuIcon} className="text-brand-400 sm:hidden" />
             </MenuTrigger>
             <MenuContent>
               <MenuItem content="Sobre" sectionId="about" />
