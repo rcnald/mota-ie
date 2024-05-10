@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { cn } from '../../../../lib/utils'
+import { cn, sliptText } from '../../../../lib/utils'
 
 interface BenefitIconProps {
   icon: React.FC<React.SVGProps<SVGSVGElement>>
@@ -31,7 +31,7 @@ export function Benefit({ className, children }: BenefitProps) {
   return (
     <ul
       className={cn(
-        'flex flex-col flex-wrap justify-center gap-20 text-center md:flex-row lg:text-start',
+        'flex flex-col flex-wrap justify-center gap-20 text-center md:flex-row lg:justify-between lg:text-start',
         className,
       )}
     >
@@ -42,7 +42,7 @@ export function Benefit({ className, children }: BenefitProps) {
 
 export function BenefitItem({ children }: BenefitItemProps) {
   return (
-    <li className="group flex max-w-[300px] flex-col items-center gap-4 lg:items-start">
+    <li className="group flex flex-[1_1_300px] flex-col items-center gap-4 lg:items-start">
       {children}
     </li>
   )
@@ -57,21 +57,20 @@ export function BenefitIcon({ icon: Icon }: BenefitIconProps) {
 }
 
 export function BenefitTitle({ children }: BenefitTitleProps) {
-  const titleWords = children.split(' ')
-  const titleLastWordIndex = titleWords.length - 1
-  const titleLastWord = titleWords[titleLastWordIndex]
-  const titleWithOutLastWord = titleWords.reduce((acc, word) => {
-    return titleLastWord !== word ? (acc += `${word} `) : acc
-  }, '')
+  const { textLastWord, textWithOutLastWord } = sliptText(children)
 
   return (
     <h2 className="text-xl font-bold text-neutral-950">
-      {titleWithOutLastWord}
-      <strong className="font-bold text-brand-400">{titleLastWord}</strong>
+      {textWithOutLastWord}
+      <strong className="font-bold text-brand-400">{textLastWord}</strong>
     </h2>
   )
 }
 
 export function BenefitDescription({ children }: BenefitDescriptionProps) {
-  return <p className="text-xl font-medium text-accent-800">{children}</p>
+  return (
+    <p className="max-w-[300px] text-xl font-medium text-accent-800">
+      {children}
+    </p>
+  )
 }

@@ -59,8 +59,8 @@ export function Hero() {
         </div>
       </header>
 
-      <div className="grid w-full grid-rows-[100px_1fr] justify-center bg-benefits-image bg-cover bg-[top_center] bg-no-repeat px-5">
-        <Benefit className="row-start-2">
+      <div className="grid w-full grid-rows-[100px_1fr] place-items-center bg-benefits-image bg-cover bg-[top_center] bg-no-repeat">
+        <Benefit className="row-start-2 w-full max-w-[1200px] px-5">
           <BenefitItem>
             <BenefitIcon icon={Clock} />
             <BenefitTitle>Pontualidade Comprometida</BenefitTitle>
