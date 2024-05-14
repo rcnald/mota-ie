@@ -5,197 +5,302 @@ import {
   createContext,
   useContext,
   useEffect,
+  useId,
   useRef,
   useState,
-} from 'react';
-interface SelectContextType {
-  isOpen: boolean
-  selectedValue: { display: string; value: string }
-  handleTriggerClick: () => void
-  handleValueChange: (e: MouseEvent<HTMLButtonElement>) => void
+} from 'react'
+import { createPortal } from 'react-dom'
+
+type handleSelectClickType = (e: MouseEvent<HTMLButtonElement>) => void
+
+interface selectedValueType {
+  displayedValue: string
+  value: string
 }
 
-const SelectContext = createContext({} as SelectContextType)
+interface SelectContextType {
+  selectContentId: string
+  selectLabelId: string
+  isSelectOpen: boolean
+  selectedItemValues: selectedValueType
+  selectTriggerRef: React.RefObject<HTMLButtonElement>
+  selectContentRef: React.RefObject<HTMLUListElement>
+  handleItemClick: handleSelectClickType
+  handleTriggerClick: () => void
+}
 
 interface SelectProps {
   value?: string
-  onValueChange?: () => void
   children: ReactNode
+  onValueChange?: () => void
 }
 
 interface SelectItemProps extends PropsWithChildren {
   value: string
 }
-interface SelectTriggerProps extends PropsWithChildren {}
+
 interface SelectValueProps extends PropsWithChildren {
   placeholder: string
-  children?: ReactNode
 }
 
 interface ArrowKeysType {
   [key: string]: () => void
 }
 
+const SelectContext = createContext({} as SelectContextType)
+
 export function Select({ children }: SelectProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [selectedValue, setSelectedValue] = useState<{
-    display: string
-    value: string
-  }>({ display: '', value: '' })
+  const [isSelectOpen, setIsSelectOpen] = useState(false)
+  const [selectedItemValues, setSelectedItemValues] =
+    useState<selectedValueType>({
+      displayedValue: '',
+      value: '',
+    })
+  const selectTriggerRef = useRef<HTMLButtonElement>(null)
+  const selectContentRef = useRef<HTMLUListElement>(null)
+  const selectContentId = useId()
+  const selectLabelId = useId()
 
   const handleTriggerClick = () => {
-    setIsOpen((prev) => !prev)
+    setIsSelectOpen((prev) => !prev)
   }
 
-  const handleValueChange = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleItemClick: handleSelectClickType = (e) => {
     e.preventDefault()
 
-    const display = e.currentTarget.textContent ?? ''
+    const displayedValue = e.currentTarget.textContent ?? ''
     const value = e.currentTarget.getAttribute('data-value') ?? ''
 
-    setSelectedValue({ display, value })
+    setSelectedItemValues({ displayedValue, value })
+    setIsSelectOpen(false)
+
+    if (selectTriggerRef.current) selectTriggerRef.current.focus()
   }
+
+  useEffect(() => {
+    function handleSelectKeyDown(e: globalThis.KeyboardEvent) {
+      if (e.key === 'Tab' && isSelectOpen) e.preventDefault()
+      if (e.key === 'Escape' && isSelectOpen) {
+        setIsSelectOpen(false)
+        if (selectTriggerRef.current) selectTriggerRef.current.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleSelectKeyDown)
+
+    return () => document.removeEventListener('keydown', handleSelectKeyDown)
+  }, [isSelectOpen])
+
+  useEffect(() => {
+    if (selectTriggerRef.current && selectContentRef.current && isSelectOpen) {
+      const {
+        bottom: contentDistanceToClientTop,
+        left: contentDistanceToClientLeft,
+        height: contentHeight,
+      } = selectTriggerRef.current.getBoundingClientRect()
+
+      const isTriggerInSecondClientHeightHalf =
+        window.innerHeight / contentDistanceToClientTop < 2
+
+      selectContentRef.current.style.top = `${contentDistanceToClientTop}px`
+      selectContentRef.current.style.left = `${contentDistanceToClientLeft}px`
+      selectContentRef.current.style.transform = ''
+
+      if (isTriggerInSecondClientHeightHalf) {
+        selectContentRef.current.style.transform = `translateY(calc(-100% - ${contentHeight}px))`
+      }
+    }
+  }, [isSelectOpen])
+
+  useEffect(() => {
+    const closeSelectOnBlur = (e: globalThis.UIEvent) => {
+      const isTargetSelectTrigger = e.target === selectTriggerRef.current
+      const isTargetSelectContent = e.target === selectContentRef.current
+
+      if (isTargetSelectTrigger || isTargetSelectContent) return
+
+      setIsSelectOpen(false)
+      if (selectTriggerRef.current) selectTriggerRef.current.focus()
+    }
+    window.addEventListener('resize', closeSelectOnBlur)
+    window.addEventListener('click', closeSelectOnBlur)
+
+    return () => {
+      window.removeEventListener('resize', closeSelectOnBlur)
+      window.removeEventListener('click', closeSelectOnBlur)
+    }
+  }, [])
 
   return (
     <SelectContext.Provider
-      value={{ isOpen, selectedValue, handleTriggerClick, handleValueChange }}
+      value={{
+        selectLabelId,
+        selectContentId,
+        isSelectOpen,
+        selectedItemValues,
+        selectTriggerRef,
+        selectContentRef,
+        handleTriggerClick,
+        handleItemClick,
+      }}
     >
       {children}
     </SelectContext.Provider>
   )
 }
 
-export function SelectTrigger({ children }: SelectTriggerProps) {
-  const { handleTriggerClick } = useContext(SelectContext)
+export function SelectTrigger({ children }: PropsWithChildren) {
+  const {
+    handleTriggerClick,
+    selectTriggerRef,
+    isSelectOpen,
+    selectContentId,
+  } = useContext(SelectContext)
   return (
-    <button type="button" onClick={handleTriggerClick}>
+    <button
+      type="button"
+      role="combobox"
+      aria-controls={selectContentId}
+      aria-expanded={isSelectOpen}
+      onClick={handleTriggerClick}
+      ref={selectTriggerRef}
+    >
       {children}
     </button>
   )
 }
 
 export function SelectValue({ placeholder }: SelectValueProps) {
-  const { selectedValue } = useContext(SelectContext)
+  const { selectedItemValues } = useContext(SelectContext)
+  const selectedDisplayValue =
+    selectedItemValues.displayedValue === ''
+      ? placeholder
+      : selectedItemValues.displayedValue
+  const selectedValue =
+    selectedItemValues.value === '' ? null : selectedItemValues.value
+
   return (
-    <span>
-      {selectedValue.display === '' ? placeholder : selectedValue.display}
+    <span data-value={selectedValue} className="pointer-events-none">
+      {selectedDisplayValue}
     </span>
   )
 }
 
 export function SelectContent({ children }: PropsWithChildren) {
-  const { selectedValue } = useContext(SelectContext)
-  const selectContentRef = useRef<HTMLUListElement>(null)
-  const activeOption = useRef(-1)
+  const {
+    selectContentRef,
+    selectedItemValues,
+    isSelectOpen,
+    selectContentId,
+    selectLabelId,
+  } = useContext(SelectContext)
+  const itemToFocusIndex = useRef(-1)
+  const selectState = isSelectOpen ? 'open' : 'closed'
 
   useEffect(() => {
-    const selectContentRefInsideEffect = selectContentRef
+    const selectContentElement = selectContentRef.current
 
-    if (selectContentRef.current) {
+    if (selectContentElement && isSelectOpen) {
       const contentItems = Array.from(
-        selectContentRef.current.getElementsByTagName('button'),
+        selectContentElement.getElementsByTagName('button'),
       )
+      const lastItemIndex = contentItems.length - 1
       const selectedItem: HTMLButtonElement | null =
-        selectContentRef.current.querySelector(
-          `[data-value="${selectedValue.value}"]`,
+        selectContentElement.querySelector(
+          `[data-value="${selectedItemValues.value}"]`,
         )
-
       const selectedItemIndex = contentItems.findIndex(
         (item) => item === selectedItem,
       )
 
-      activeOption.current = selectedItemIndex
+      itemToFocusIndex.current = selectedItemIndex
 
-      if (contentItems[activeOption.current]) {
-        contentItems[activeOption.current].focus()
+      if (itemToFocusIndex.current < 0) {
+        itemToFocusIndex.current = 0
       }
-    }
 
-    function handleSelectKeyDown(e: globalThis.KeyboardEvent) {
-      if (selectContentRef.current) {
-        const contentOptions =
-          selectContentRef.current.getElementsByTagName('button')
+      if (contentItems[itemToFocusIndex.current]) {
+        contentItems[itemToFocusIndex.current].focus()
+      }
 
-        const ArrowKeys: ArrowKeysType = {
-          ArrowDown() {
-            if (activeOption.current < 0) {
-              activeOption.current = contentOptions.length - 1
-              return
-            }
-
-            if (activeOption.current < contentOptions.length - 1) {
-              activeOption.current++
-            }
-          },
-          ArrowUp() {
-            if (activeOption.current < 0) {
-              activeOption.current = 0
-              return
-            }
-            if (activeOption.current > 0) {
-              activeOption.current--
-            }
-          },
-        }
-
-        if (ArrowKeys[e.key]) {
-          e.preventDefault()
-          ArrowKeys[e.key]()
-
-          if (contentOptions[activeOption.current]) {
-            contentOptions[activeOption.current].focus()
+      const ArrowKeysActions: ArrowKeysType = {
+        ArrowDown() {
+          if (itemToFocusIndex.current < lastItemIndex) {
+            itemToFocusIndex.current++
           }
+        },
+        ArrowUp() {
+          if (itemToFocusIndex.current > 0) {
+            itemToFocusIndex.current--
+          }
+        },
+      }
+
+      function handleContentKeyDown(e: globalThis.KeyboardEvent) {
+        if (ArrowKeysActions[e.key]) {
+          e.preventDefault()
+          ArrowKeysActions[e.key]()
+        }
+
+        if (contentItems[itemToFocusIndex.current]) {
+          contentItems[itemToFocusIndex.current].focus()
         }
       }
-    }
 
-    function handleSelectItemMouseOver(e: globalThis.MouseEvent) {
-      if (selectContentRef.current) {
-        const contentOptions = Array.from(
-          selectContentRef.current.getElementsByTagName('button'),
-        )
+      function handleSelectItemMouseOver(e: globalThis.MouseEvent) {
+        const index = [...contentItems].indexOf(e.target as HTMLButtonElement)
+        itemToFocusIndex.current = index
 
-        const index = contentOptions.indexOf(e.target as HTMLButtonElement)
-        activeOption.current = index
-
-        if (contentOptions[activeOption.current]) {
-          contentOptions[activeOption.current].focus()
+        if (contentItems[itemToFocusIndex.current]) {
+          contentItems[itemToFocusIndex.current].focus()
         }
       }
-    }
 
-    document.addEventListener('keydown', handleSelectKeyDown)
-    selectContentRefInsideEffect.current?.addEventListener(
-      'mouseover',
-      handleSelectItemMouseOver,
-    )
-    return () => {
-      document.removeEventListener('keydown', handleSelectKeyDown)
-      selectContentRefInsideEffect.current?.removeEventListener(
+      document.addEventListener('keydown', handleContentKeyDown)
+      selectContentElement.addEventListener(
         'mouseover',
         handleSelectItemMouseOver,
       )
+      return () => {
+        document.removeEventListener('keydown', handleContentKeyDown)
+        selectContentElement.removeEventListener(
+          'mouseover',
+          handleSelectItemMouseOver,
+        )
+      }
     }
-  }, [])
+  }, [selectedItemValues, isSelectOpen, selectContentRef])
 
-  useEffect(() => {
-    function handleSelectKeyDown(e: globalThis.KeyboardEvent) {
-      if (e.key === 'Tab') e.preventDefault()
-    }
+  return (
+    <>
+      {createPortal(
+        isSelectOpen ? (
+          <ul
+            id={selectContentId}
+            ref={selectContentRef}
+            data-state={selectState}
+            aria-labelledby={selectLabelId}
+            className="fixed inset-0 z-50 h-fit w-fit data-[state=open]:block data-[state=closed]:hidden"
+          >
+            {children}
+          </ul>
+        ) : null,
+        document.body,
+      )}
+    </>
+  )
+}
 
-    document.addEventListener('keydown', handleSelectKeyDown)
-
-    return () => document.removeEventListener('keydown', handleSelectKeyDown)
-  })
-
-  return <ul ref={selectContentRef}>{children}</ul>
+export function SelectLabel({ children }: PropsWithChildren) {
+  const { selectLabelId } = useContext(SelectContext)
+  return <span id={selectLabelId}>{children}</span>
 }
 
 export function SelectItem({ value, children }: SelectItemProps) {
-  const { handleValueChange } = useContext(SelectContext)
+  const { handleItemClick } = useContext(SelectContext)
   return (
     <li>
-      <button data-value={value} onClick={handleValueChange}>
+      <button data-value={value} onClick={handleItemClick}>
         {children}
       </button>
     </li>
