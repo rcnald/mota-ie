@@ -24,6 +24,7 @@ export default {
       },
       fontFamily: {
         montserrat: '"Montserrat", sans-serif',
+        raleway: '"Raleway", sans-serif',
       },
       fontSize: {
         'hero-title-clamp': 'clamp(3rem, 2.4rem + 1.5vw, 3.75rem)',
@@ -48,6 +49,9 @@ export default {
       },
       animation: {
         pulsing: 'pulsing 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+      boxShadow: {
+        service: '0px 0px 20px 5px rgba(190, 190, 190, 0.10);',
       },
     },
   },

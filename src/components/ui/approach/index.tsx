@@ -4,9 +4,9 @@ import { Slide, SlideDescription, SlideTitle } from './slide'
 
 export function Approach() {
   return (
-    <section className="mx-auto flex w-full max-w-[1200px] items-center justify-center ">
-      <div className="grid grid-cols-1 place-items-center gap-16 px-5 lg:grid-cols-2">
-        <div className="relative flex w-full max-w-[560px] justify-center lg:block">
+    <section className="mx-auto flex w-full  items-center justify-center bg-neutral-200">
+      <div className="grid max-w-[1200px] grid-cols-1 place-items-center gap-1 px-5 py-6 lg:grid-cols-2">
+        <div className="relative flex w-full max-w-[560px] justify-center lg:block lg:h-[510px]">
           <Panel src={image} alt="" size={400} />
           <Panel
             src={image}

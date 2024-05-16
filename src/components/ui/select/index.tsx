@@ -10,6 +10,8 @@ import {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
+import { disablePageScroll, enablePageScroll } from 'scroll-lock'
+import { cn } from '../../../lib/utils'
 
 type handleSelectClickType = (e: MouseEvent<HTMLButtonElement>) => void
 
@@ -30,9 +32,8 @@ interface SelectContextType {
 }
 
 interface SelectProps {
-  value?: string
+  className?: string
   children: ReactNode
-  onValueChange?: () => void
 }
 
 interface SelectItemProps extends PropsWithChildren {
@@ -49,7 +50,7 @@ interface ArrowKeysType {
 
 const SelectContext = createContext({} as SelectContextType)
 
-export function Select({ children }: SelectProps) {
+export function Select({ className, children }: SelectProps) {
   const [isSelectOpen, setIsSelectOpen] = useState(false)
   const [selectedItemValues, setSelectedItemValues] =
     useState<selectedValueType>({
@@ -79,46 +80,17 @@ export function Select({ children }: SelectProps) {
 
   useEffect(() => {
     const handleSelectKeyDown = (e: globalThis.KeyboardEvent) => {
-      if (isSelectOpen) {
-        switch (e.key) {
-          case 'Tab':
-            e.preventDefault()
-            break
-          case 'Escape':
-            setIsSelectOpen(false)
-            selectTriggerRef.current?.focus()
-            break
-        }
+      switch (e.key) {
+        case 'Tab':
+          e.preventDefault()
+          break
+        case 'Escape':
+          setIsSelectOpen(false)
+          selectTriggerRef.current?.focus()
+          break
       }
     }
 
-    document.addEventListener('keydown', handleSelectKeyDown)
-
-    return () => document.removeEventListener('keydown', handleSelectKeyDown)
-  }, [isSelectOpen])
-
-  useEffect(() => {
-    if (selectTriggerRef.current && selectContentRef.current && isSelectOpen) {
-      const {
-        bottom: contentDistanceToClientTop,
-        left: contentDistanceToClientLeft,
-        height: contentHeight,
-      } = selectTriggerRef.current.getBoundingClientRect()
-
-      const isTriggerInSecondClientHeightHalf =
-        window.innerHeight / contentDistanceToClientTop < 2
-
-      selectContentRef.current.style.top = `${contentDistanceToClientTop}px`
-      selectContentRef.current.style.left = `${contentDistanceToClientLeft}px`
-      selectContentRef.current.style.transform = ''
-
-      if (isTriggerInSecondClientHeightHalf) {
-        selectContentRef.current.style.transform = `translateY(calc(-100% - ${contentHeight}px))`
-      }
-    }
-  }, [isSelectOpen])
-
-  useEffect(() => {
     const closeSelectOnBlur = (e: globalThis.UIEvent) => {
       const isTargetSelectTrigger = e.target === selectTriggerRef.current
       const isTargetSelectContent = e.target === selectContentRef.current
@@ -130,30 +102,90 @@ export function Select({ children }: SelectProps) {
       selectTriggerRef.current?.focus()
     }
 
-    window.addEventListener('resize', closeSelectOnBlur)
-    window.addEventListener('click', closeSelectOnBlur)
+    const disableRootReactElementBeingClickable = () => {
+      const root = document.getElementById('root')
+      if (root) {
+        root.style.pointerEvents = 'none'
+      }
+    }
+
+    const enableRootReactElementBeingClickable = () => {
+      const root = document.getElementById('root')
+      if (root) {
+        root.style.pointerEvents = ''
+      }
+    }
+
+    const moveContentDialogCloseToTrigger = () => {
+      if (selectTriggerRef.current && selectContentRef.current) {
+        const {
+          bottom: contentDistanceToClientTop,
+          left: contentDistanceToClientLeft,
+          height: contentHeight,
+        } = selectTriggerRef.current.getBoundingClientRect()
+        const paddingBetweenTriggerAndContent = 32
+        const isTriggerInSecondClientHeightHalf =
+          window.innerHeight / contentDistanceToClientTop < 2
+
+        const showContentAboveTrigger = () => {
+          if (selectContentRef.current) {
+            selectContentRef.current.style.top = `${contentDistanceToClientTop - paddingBetweenTriggerAndContent - contentHeight}px`
+            selectContentRef.current.style.left = `${contentDistanceToClientLeft}px`
+            selectContentRef.current.style.transform = `translateY(-100%)`
+          }
+        }
+
+        const showContentBelowTrigger = () => {
+          if (selectContentRef.current) {
+            selectContentRef.current.style.top = `${contentDistanceToClientTop + paddingBetweenTriggerAndContent}px`
+            selectContentRef.current.style.left = `${contentDistanceToClientLeft}px`
+            selectContentRef.current.style.transform = ''
+          }
+        }
+
+        isTriggerInSecondClientHeightHalf
+          ? showContentAboveTrigger()
+          : showContentBelowTrigger()
+      }
+    }
+
+    if (isSelectOpen) {
+      window.addEventListener('resize', closeSelectOnBlur)
+      window.addEventListener('click', closeSelectOnBlur)
+      document.addEventListener('keydown', handleSelectKeyDown)
+
+      moveContentDialogCloseToTrigger()
+      disablePageScroll()
+      disableRootReactElementBeingClickable()
+    }
 
     return () => {
       window.removeEventListener('resize', closeSelectOnBlur)
       window.removeEventListener('click', closeSelectOnBlur)
+      document.removeEventListener('keydown', handleSelectKeyDown)
+
+      enablePageScroll()
+      enableRootReactElementBeingClickable()
     }
-  }, [])
+  }, [isSelectOpen])
 
   return (
-    <SelectContext.Provider
-      value={{
-        selectLabelId,
-        selectContentId,
-        isSelectOpen,
-        selectedItemValues,
-        selectTriggerRef,
-        selectContentRef,
-        handleTriggerClick,
-        handleItemClick,
-      }}
-    >
-      {children}
-    </SelectContext.Provider>
+    <div className={cn('flex min-w-[180px] items-center', className)}>
+      <SelectContext.Provider
+        value={{
+          selectLabelId,
+          selectContentId,
+          isSelectOpen,
+          selectedItemValues,
+          selectTriggerRef,
+          selectContentRef,
+          handleTriggerClick,
+          handleItemClick,
+        }}
+      >
+        {children}
+      </SelectContext.Provider>
+    </div>
   )
 }
 
@@ -173,6 +205,7 @@ export function SelectTrigger({ children }: PropsWithChildren) {
       aria-expanded={isSelectOpen}
       onClick={handleTriggerClick}
       ref={selectTriggerRef}
+      className="flex w-full items-center justify-between p-4 text-xl *:pointer-events-none"
     >
       {children}
     </button>
@@ -185,7 +218,7 @@ export function SelectValue({ placeholder }: SelectValueProps) {
   const selectedValue = selectedItemValues.value || null
 
   return (
-    <span data-value={selectedValue} className="pointer-events-none">
+    <span data-value={selectedValue} className="whitespace-nowrap">
       {selectedDisplayValue}
     </span>
   )
@@ -194,6 +227,7 @@ export function SelectValue({ placeholder }: SelectValueProps) {
 export function SelectContent({ children }: PropsWithChildren) {
   const {
     selectContentRef,
+    selectTriggerRef,
     selectedItemValues,
     isSelectOpen,
     selectContentId,
@@ -270,6 +304,15 @@ export function SelectContent({ children }: PropsWithChildren) {
     }
   }, [selectedItemValues, isSelectOpen, selectContentRef])
 
+  useEffect(() => {
+    if (selectTriggerRef.current && isSelectOpen) {
+      const { width } = selectTriggerRef.current.getBoundingClientRect()
+      if (selectContentRef.current) {
+        selectContentRef.current.style.width = `${width}px`
+      }
+    }
+  }, [isSelectOpen, selectContentRef, selectTriggerRef])
+
   return (
     <>
       {createPortal(
@@ -279,7 +322,7 @@ export function SelectContent({ children }: PropsWithChildren) {
             ref={selectContentRef}
             data-state={selectState}
             aria-labelledby={selectLabelId}
-            className="fixed inset-0 z-50 h-fit w-fit data-[state=open]:block data-[state=closed]:hidden"
+            className="fixed inset-0 z-50 h-fit w-fit rounded-lg border border-neutral-100 bg-neutral-50 p-1 text-xl data-[state=open]:block data-[state=closed]:hidden"
           >
             {children}
           </ul>
@@ -293,15 +336,26 @@ export function SelectContent({ children }: PropsWithChildren) {
 export function SelectLabel({ children }: PropsWithChildren) {
   const { selectLabelId } = useContext(SelectContext)
 
-  return <span id={selectLabelId}>{children}</span>
+  return (
+    <span
+      id={selectLabelId}
+      className="w-full cursor-default px-3 py-2 text-start font-bold"
+    >
+      {children}
+    </span>
+  )
 }
 
 export function SelectItem({ value, children }: SelectItemProps) {
   const { handleItemClick } = useContext(SelectContext)
 
   return (
-    <li>
-      <button data-value={value} onClick={handleItemClick}>
+    <li className="rounded-md focus-within:bg-neutral-300">
+      <button
+        data-value={value}
+        onClick={handleItemClick}
+        className="w-full px-3 py-2 text-start"
+      >
         {children}
       </button>
     </li>
