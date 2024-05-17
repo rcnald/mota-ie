@@ -19,10 +19,10 @@ export function SearchForm() {
         </SelectTrigger>
         <SelectContent>
           <SelectLabel>Serviços</SelectLabel>
-          <SelectItem value="category">Residencias</SelectItem>
-          <SelectItem value="role">Prédios</SelectItem>
-          <SelectItem value="banana">Comércios</SelectItem>
-          <SelectItem value="banana">Industrias</SelectItem>
+          <SelectItem value="0">Residencias</SelectItem>
+          <SelectItem value="1">Prédios</SelectItem>
+          <SelectItem value="2">Comércios</SelectItem>
+          <SelectItem value="3">Industrias</SelectItem>
         </SelectContent>
       </Select>
       <input

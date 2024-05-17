@@ -16,7 +16,7 @@ export function List() {
         <Item>
           <ItemTitle>Instalação de Tomadas e Interruptores</ItemTitle>
           <ItemTag> Instalações residenciais</ItemTag>
-          <ItemAction to="/sex" />
+          <ItemAction to="/contact/service" />
           <ItemDescription>
             Adição ou substituição de tomadas e interruptores para melhor
             atender às necessidades elétricas em residências.

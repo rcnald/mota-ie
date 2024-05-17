@@ -243,14 +243,36 @@ export function SelectContent({ children }: PropsWithChildren) {
       const contentItems = [
         ...selectContentElement.getElementsByTagName('button'),
       ]
-      const contentLastItemIndex = contentItems.length - 1
       const selectedItem =
         selectContentElement.querySelector<HTMLButtonElement>(
           `[data-value="${selectedItemValues.value}"]`,
         )
+      const firstItemIndex = 0
       const selectedItemIndex = contentItems.findIndex(
         (item) => item === selectedItem,
       )
+
+      const focusCurrentItem = () => {
+        if (contentItems[itemToFocusIndex.current]) {
+          contentItems[itemToFocusIndex.current].focus()
+        }
+      }
+
+      itemToFocusIndex.current =
+        selectedItemIndex < 0 ? firstItemIndex : selectedItemIndex
+
+      focusCurrentItem()
+    }
+  }, [isSelectOpen, selectedItemValues, selectContentRef])
+
+  useEffect(() => {
+    const selectContentElement = selectContentRef.current
+
+    if (selectContentElement && isSelectOpen) {
+      const contentItems = [
+        ...selectContentElement.getElementsByTagName('button'),
+      ]
+      const contentLastItemIndex = contentItems.length - 1
 
       const ArrowKeysActions: ArrowKeysType = {
         ArrowDown() {
@@ -281,15 +303,13 @@ export function SelectContent({ children }: PropsWithChildren) {
       }
 
       const handleItemMouseOver = (e: globalThis.MouseEvent) => {
-        const index = [...contentItems].indexOf(e.target as HTMLButtonElement)
-        itemToFocusIndex.current = index < 0 ? itemToFocusIndex.current : index
+        const hoveredItem = e.target as HTMLButtonElement
+        const hoveredItemIndex = [...contentItems].indexOf(hoveredItem)
+        itemToFocusIndex.current =
+          hoveredItemIndex < 0 ? itemToFocusIndex.current : hoveredItemIndex
 
         focusCurrentItem()
       }
-
-      itemToFocusIndex.current = selectedItemIndex < 0 ? 0 : selectedItemIndex
-
-      focusCurrentItem()
 
       document.addEventListener('keydown', handleContentKeyDown)
       selectContentElement.addEventListener('mouseover', handleItemMouseOver)
@@ -302,14 +322,14 @@ export function SelectContent({ children }: PropsWithChildren) {
         )
       }
     }
-  }, [selectedItemValues, isSelectOpen, selectContentRef])
+  }, [isSelectOpen, selectContentRef])
 
   useEffect(() => {
-    if (selectTriggerRef.current && isSelectOpen) {
-      const { width } = selectTriggerRef.current.getBoundingClientRect()
-      if (selectContentRef.current) {
-        selectContentRef.current.style.width = `${width}px`
-      }
+    if (selectTriggerRef.current && selectContentRef.current && isSelectOpen) {
+      const { width: triggerWidth } =
+        selectTriggerRef.current.getBoundingClientRect()
+
+      selectContentRef.current.style.width = `${triggerWidth}px`
     }
   }, [isSelectOpen, selectContentRef, selectTriggerRef])
 
