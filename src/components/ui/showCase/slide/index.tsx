@@ -1,31 +1,30 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Children, useEffect, useRef, useState } from 'react'
+import { Children, useEffect, useRef } from 'react'
 
 interface SlideProps {
   slidesPerView: number
   children: React.ReactNode
+  slideItemToShowIndex: number
+  onIndexIncrease: () => void
+  onIndexDecrease: () => void
 }
 
-export function Slide({ slidesPerView, children }: SlideProps) {
-  const [slideItemToShowIndex, setSlideItemToShowIndex] = useState<number>(0)
+export function Slide({
+  slidesPerView,
+  slideItemToShowIndex,
+  onIndexIncrease,
+  onIndexDecrease,
+  children,
+}: SlideProps) {
   const slideRef = useRef<HTMLDivElement>(null)
 
   const totalSlideItems = Children.count(children)
   const totalSlideItemsToShow =
     totalSlideItems - (totalSlideItems >= slidesPerView ? slidesPerView - 1 : 0)
 
-  const isPreviousDisabled = slideItemToShowIndex === 0
-  const isNextDisabled = slideItemToShowIndex === totalSlideItemsToShow - 1
-
-  const showNextSlideItem = () => {
-    setSlideItemToShowIndex(
-      (prevIndex) => (prevIndex === 0 ? 0 : prevIndex) + 1,
-    )
-  }
-
-  const showPreviousSlideItem = () => {
-    setSlideItemToShowIndex((prevIndex) => (prevIndex ?? 0) - 1)
-  }
+  const isPreviousActionDisabled = slideItemToShowIndex === 0
+  const isNextActionDisabled =
+    slideItemToShowIndex === totalSlideItemsToShow - 1
 
   useEffect(() => {
     if (slideRef.current) {
@@ -60,11 +59,11 @@ export function Slide({ slidesPerView, children }: SlideProps) {
     <div>
       <div
         ref={slideRef}
-        className="mx-auto flex max-w-[1440px] items-center gap-5 overflow-hidden px-4 sm:px-[20%]"
+        className="mx-auto flex max-w-[1440px] items-center gap-5 overflow-hidden px-4 md:px-[25%]"
       >
         {Children.toArray(children).map((child, index) => (
           <article
-            className="w-full min-w-[100%] sm:min-w-[740px] data-[select]:sm:min-w-[850px]"
+            className="w-full min-w-[100%]  md:min-w-[650px] data-[select]:md:min-w-[740px]"
             key={`slide-${index}`}
             id={`slide-${index}`}
           >
@@ -73,12 +72,20 @@ export function Slide({ slidesPerView, children }: SlideProps) {
         ))}
       </div>
 
-      <div className="mx-auto flex max-w-[850px] justify-between px-4">
-        <button onClick={showPreviousSlideItem} disabled={isPreviousDisabled}>
-          <ChevronLeft />
+      <div className="mx-auto flex max-w-[740px] justify-between">
+        <button
+          onClick={onIndexDecrease}
+          disabled={isPreviousActionDisabled}
+          className="text-neutral-300 hover:text-neutral-950 disabled:hover:text-neutral-300"
+        >
+          <ChevronLeft size={48} />
         </button>
-        <button onClick={showNextSlideItem} disabled={isNextDisabled}>
-          <ChevronRight />
+        <button
+          onClick={onIndexIncrease}
+          disabled={isNextActionDisabled}
+          className="text-neutral-300 hover:text-neutral-950 disabled:hover:text-neutral-300"
+        >
+          <ChevronRight size={48} />
         </button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { Approach } from './components/ui/approach'
 import { Hero } from './components/ui/hero'
 import { Services } from './components/ui/services'
+import { ShowCase } from './components/ui/showCase'
 
 export function App() {
   return (
@@ -8,6 +9,7 @@ export function App() {
       <Hero />
       <Approach />
       <Services />
+      <ShowCase />
     </div>
   )
 }

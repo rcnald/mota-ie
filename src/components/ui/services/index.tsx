@@ -1,4 +1,4 @@
-import { List } from './list'
+import { Cards } from './cards'
 import { SearchForm } from './searchForm'
 
 export function Services() {
@@ -8,6 +8,7 @@ export function Services() {
         <h1 className="text-center text-hero-title-clamp">
           Descubra Nossas Especialidades em
           <strong>
+            {' '}
             Instalações <span className="text-brand-400">Elétricas</span>
           </strong>
         </h1>
@@ -21,7 +22,7 @@ export function Services() {
         >
           <SearchForm />
         </form>
-        <List />
+        <Cards />
       </div>
     </section>
   )

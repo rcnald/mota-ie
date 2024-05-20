@@ -1,11 +1,11 @@
 import { MoveRight } from 'lucide-react'
 import { PropsWithChildren } from 'react'
 
-interface ItemActionProps {
+interface CardActionProps {
   to: string
 }
 
-export function List() {
+export function Cards() {
   return (
     <>
       <span className="text-2xl font-semibold text-brand-400">
@@ -13,21 +13,21 @@ export function List() {
       </span>
 
       <ul className="flex flex-col gap-4">
-        <Item>
-          <ItemTitle>Instalação de Tomadas e Interruptores</ItemTitle>
-          <ItemTag> Instalações residenciais</ItemTag>
-          <ItemAction to="/contact/service" />
-          <ItemDescription>
+        <Card>
+          <CardTitle>Instalação de Tomadas e Interruptores</CardTitle>
+          <CardTag> Instalações residenciais</CardTag>
+          <CardAction to="/contact/service" />
+          <CardDescription>
             Adição ou substituição de tomadas e interruptores para melhor
             atender às necessidades elétricas em residências.
-          </ItemDescription>
-        </Item>
+          </CardDescription>
+        </Card>
       </ul>
     </>
   )
 }
 
-function Item({ children }: PropsWithChildren) {
+function Card({ children }: PropsWithChildren) {
   return (
     <li className="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] place-items-start gap-3 rounded-lg border border-solid border-neutral-200 bg-neutral-50 p-6 font-raleway">
       {children}
@@ -35,11 +35,11 @@ function Item({ children }: PropsWithChildren) {
   )
 }
 
-function ItemTitle({ children }: PropsWithChildren) {
+function CardTitle({ children }: PropsWithChildren) {
   return <h2 className="w-fit text-xl font-bold md:row-start-1">{children}</h2>
 }
 
-function ItemTag({ children }: PropsWithChildren) {
+function CardTag({ children }: PropsWithChildren) {
   return (
     <span className="row-start-2 w-fit self-start whitespace-nowrap rounded-lg bg-neutral-100 p-1.5 text-sm font-semibold text-brand-400 md:row-start-1">
       {children}
@@ -47,7 +47,7 @@ function ItemTag({ children }: PropsWithChildren) {
   )
 }
 
-function ItemAction({ to }: ItemActionProps) {
+function CardAction({ to }: CardActionProps) {
   return (
     <a
       href={to}
@@ -61,7 +61,7 @@ function ItemAction({ to }: ItemActionProps) {
   )
 }
 
-function ItemDescription({ children }: PropsWithChildren) {
+function CardDescription({ children }: PropsWithChildren) {
   return (
     <p className="col-span-3 text-base font-semibold text-accent-800">
       {children}
