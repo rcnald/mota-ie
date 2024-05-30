@@ -1,4 +1,5 @@
 import { Approach } from './components/ui/approach'
+import { Footer } from './components/ui/footer'
 import { Hero } from './components/ui/hero'
 import { Services } from './components/ui/services'
 import { ShowCase } from './components/ui/showCase'
@@ -10,6 +11,7 @@ export function App() {
       <Approach />
       <Services />
       <ShowCase />
+      <Footer />
     </div>
   )
 }

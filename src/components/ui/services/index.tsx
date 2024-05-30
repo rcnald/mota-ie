@@ -3,7 +3,7 @@ import { SearchForm } from './searchForm'
 
 export function Services() {
   return (
-    <section className="flex w-full justify-center bg-neutral-50 py-40">
+    <main className="flex w-full justify-center bg-neutral-50 py-40">
       <div className="flex max-w-[950px] flex-col gap-14 px-5">
         <h1 className="text-center text-hero-title-clamp">
           Descubra Nossas Especialidades em
@@ -24,6 +24,6 @@ export function Services() {
         </form>
         <Cards />
       </div>
-    </section>
+    </main>
   )
 }
