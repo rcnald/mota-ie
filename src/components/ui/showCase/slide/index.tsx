@@ -47,8 +47,6 @@ export function Slide({
         })
       }
 
-      showSlideItem()
-
       window.addEventListener('resize', showSlideItem)
 
       return () => window.removeEventListener('resize', showSlideItem)

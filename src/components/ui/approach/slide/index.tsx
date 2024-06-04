@@ -1,5 +1,6 @@
-import { ReactNode } from 'react'
-import { sliptText } from '../../../../lib/utils'
+import { useInView } from 'framer-motion'
+import { ReactNode, useRef } from 'react'
+import { cn, sliptText } from '../../../../lib/utils'
 
 interface SlideProps {
   position: number
@@ -16,15 +17,20 @@ interface SlideDescriptionProps {
 
 export function Slide({ position, children }: SlideProps) {
   const formattedPosition = String(position).padStart(2, '0')
+  const SlideRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(SlideRef, { margin: '-50% 0px -50% 0px' })
 
   return (
-    <article>
+    <div
+      ref={SlideRef}
+      className={cn('opacity-30 transition-all', { 'opacity-100': isInView })}
+    >
       <div className="flex flex-col items-center lg:w-fit">
         <span className="text-5xl leading-snug">{formattedPosition}</span>
         <hr className="flex h-14 w-fit border-r-2 border-t-0" />
       </div>
       {children}
-    </article>
+    </div>
   )
 }
 
