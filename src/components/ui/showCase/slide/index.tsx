@@ -16,6 +16,7 @@ export function Slide({
   onIndexDecrease,
   children,
 }: SlideProps) {
+  const isNotPageFirstRender = useRef(false)
   const slideRef = useRef<HTMLDivElement>(null)
 
   const totalSlideItems = Children.count(children)
@@ -27,7 +28,7 @@ export function Slide({
     slideItemToShowIndex === totalSlideItemsToShow - 1
 
   useEffect(() => {
-    if (slideRef.current) {
+    if (slideRef.current && isNotPageFirstRender.current) {
       const slideItem = slideRef.current.querySelector<HTMLElement>(
         `#slide-${slideItemToShowIndex}`,
       )
@@ -47,10 +48,14 @@ export function Slide({
         })
       }
 
+      showSlideItem()
+
       window.addEventListener('resize', showSlideItem)
 
       return () => window.removeEventListener('resize', showSlideItem)
     }
+
+    isNotPageFirstRender.current = true
   }, [slideItemToShowIndex])
 
   return (

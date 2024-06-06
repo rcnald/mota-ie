@@ -30,9 +30,9 @@ export default {
         'hero-title-clamp': 'clamp(3rem, 2.4rem + 1.5vw, 3.75rem)',
       },
       backgroundImage: {
-        'hero-image': 'url("./src/assets/hero-background.jpg")',
-        'hero-image-mobile': 'url("./src/assets/hero-background-mobile.jpg")',
-        'benefits-image': 'url("./src/assets/benefits-wave.svg")',
+        'hero-image': 'url("/hero-background.jpg")',
+        'hero-image-mobile': 'url("/hero-background-mobile.jpg")',
+        'benefits-image': 'url("/benefits-wave.svg")',
       },
       keyframes: {
         pulsing: {
