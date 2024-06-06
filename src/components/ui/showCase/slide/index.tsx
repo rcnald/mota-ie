@@ -1,3 +1,4 @@
+import { useInView } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Children, useEffect, useRef } from 'react'
 
@@ -16,8 +17,8 @@ export function Slide({
   onIndexDecrease,
   children,
 }: SlideProps) {
-  const isNotPageFirstRender = useRef(false)
   const slideRef = useRef<HTMLDivElement>(null)
+  const isSlideInView = useInView(slideRef)
 
   const totalSlideItems = Children.count(children)
   const totalSlideItemsToShow =
@@ -28,7 +29,7 @@ export function Slide({
     slideItemToShowIndex === totalSlideItemsToShow - 1
 
   useEffect(() => {
-    if (slideRef.current && isNotPageFirstRender.current) {
+    if (slideRef.current && isSlideInView) {
       const slideItem = slideRef.current.querySelector<HTMLElement>(
         `#slide-${slideItemToShowIndex}`,
       )
@@ -54,9 +55,7 @@ export function Slide({
 
       return () => window.removeEventListener('resize', showSlideItem)
     }
-
-    isNotPageFirstRender.current = true
-  }, [slideItemToShowIndex])
+  }, [slideItemToShowIndex, isSlideInView])
 
   return (
     <div>

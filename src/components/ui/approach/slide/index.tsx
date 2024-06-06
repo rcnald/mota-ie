@@ -17,13 +17,15 @@ interface SlideDescriptionProps {
 
 export function Slide({ position, children }: SlideProps) {
   const formattedPosition = String(position).padStart(2, '0')
-  const SlideRef = useRef<HTMLDivElement>(null)
-  const isInView = useInView(SlideRef, { margin: '-50% 0px -50% 0px' })
+  const slideRef = useRef<HTMLDivElement>(null)
+  const isSlideInView = useInView(slideRef, { margin: '-50% 0px -50% 0px' })
 
   return (
     <div
-      ref={SlideRef}
-      className={cn('opacity-30 transition-all', { 'opacity-100': isInView })}
+      ref={slideRef}
+      className={cn('opacity-30 transition-all', {
+        'opacity-100': isSlideInView,
+      })}
     >
       <div className="flex flex-col items-center lg:w-fit">
         <span className="text-5xl leading-snug">{formattedPosition}</span>
