@@ -22,7 +22,7 @@ export function Services() {
         >
           <SearchForm />
         </form>
-        <Cards />
+        <Cards perPage={3} />
       </div>
     </main>
   )

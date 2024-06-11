@@ -37,7 +37,7 @@ interface SelectProps {
 }
 
 interface SelectItemProps extends PropsWithChildren {
-  value: string
+  value: string | number
 }
 
 interface SelectValueProps extends PropsWithChildren {

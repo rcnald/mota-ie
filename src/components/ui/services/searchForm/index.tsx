@@ -1,4 +1,6 @@
 import { ChevronDown, Search } from 'lucide-react'
+import { areas } from '../../../../lib/data'
+import { sliptText } from '../../../../lib/utils'
 import { Button } from '../../button'
 import {
   Select,
@@ -10,6 +12,11 @@ import {
 } from '../../select'
 
 export function SearchForm() {
+  const areasToPopulateSelect = areas.map((area) => {
+    const { name, id } = area
+    return { id, name: sliptText(name).textLastWord }
+  })
+
   return (
     <>
       <Select className="col-start-1 col-end-3 shrink-0">
@@ -18,11 +25,13 @@ export function SearchForm() {
           <ChevronDown />
         </SelectTrigger>
         <SelectContent>
-          <SelectLabel>Serviços</SelectLabel>
-          <SelectItem value="0">Residencias</SelectItem>
-          <SelectItem value="1">Prédios</SelectItem>
-          <SelectItem value="2">Comércios</SelectItem>
-          <SelectItem value="3">Industrias</SelectItem>
+          <SelectLabel>Area</SelectLabel>
+          <SelectItem value={0}>Todos</SelectItem>
+          {areasToPopulateSelect.map((area) => (
+            <SelectItem value={area.id} key={area.id}>
+              {area.name}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
       <input

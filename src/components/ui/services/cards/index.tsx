@@ -1,47 +1,94 @@
 import { MoveRight } from 'lucide-react'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useState } from 'react'
+import { areas, services } from '../../../../lib/data'
+import { Pagination } from '../pagination'
 
+interface CardProps {
+  perPage: number
+  filter?: { areaId: number }
+  query?: string
+}
 interface CardActionProps {
   to: string
 }
 
-export function Cards() {
+export function Cards({
+  perPage,
+  query = '',
+  filter = { areaId: 0 },
+}: CardProps) {
+  const [pageIndex, setPageIndex] = useState(0)
+
+  const firstItemPageIndex = pageIndex * perPage
+  const lastItemPageIndex = firstItemPageIndex + perPage
+
+  const servicesFilteredByArea = services.filter((service) => {
+    if (filter.areaId !== 0) {
+      return service.areaId === filter.areaId
+    }
+
+    return service
+  })
+
+  const servicesFilteredByQuery = servicesFilteredByArea.filter((service) => {
+    if (query !== '') {
+      return service.title.includes(query)
+    }
+
+    return service
+  })
+
+  const servicesPerPage = servicesFilteredByQuery.filter((_, index) => {
+    return firstItemPageIndex <= index && index < lastItemPageIndex
+  })
+
+  const filteredServicesCount = servicesFilteredByQuery.length
+
   return (
     <>
       <span className="text-2xl font-semibold text-brand-400">
-        Serviços Encontrados (6)
+        Serviços Encontrados ({filteredServicesCount})
       </span>
 
       <ul className="flex flex-col gap-4">
-        <Card>
-          <CardTitle>Instalação de Tomadas e Interruptores</CardTitle>
-          <CardTag> Instalações residenciais</CardTag>
-          <CardAction to="/contact/service" />
-          <CardDescription>
-            Adição ou substituição de tomadas e interruptores para melhor
-            atender às necessidades elétricas em residências.
-          </CardDescription>
-        </Card>
+        {servicesPerPage.map((service) => {
+          return (
+            <Card key={service.id}>
+              <CardTitle>{service.title}</CardTitle>
+              <CardTag>
+                {areas.find((area) => area.id === service.areaId)?.name}
+              </CardTag>
+              <CardAction to="/contact/service" />
+              <CardDescription>{service.description}</CardDescription>
+            </Card>
+          )
+        })}
       </ul>
+      <Pagination
+        pageIndex={pageIndex}
+        perPage={perPage}
+        totalCount={filteredServicesCount}
+        onPageChange={setPageIndex}
+      />
     </>
   )
 }
 
 function Card({ children }: PropsWithChildren) {
   return (
-    <li className="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] place-items-start gap-3 rounded-lg border border-solid border-neutral-200 bg-neutral-50 p-6 font-raleway">
+    <li className="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] place-items-start gap-3 rounded-lg border border-solid border-neutral-200 bg-neutral-50 p-6 font-raleway md:grid-cols-[auto_200px]">
       {children}
     </li>
   )
 }
 
 function CardTitle({ children }: PropsWithChildren) {
-  return <h2 className="w-fit text-xl font-bold md:row-start-1">{children}</h2>
+  return <h2 className="text-xl font-bold md:row-start-1">{children}</h2>
 }
 
 function CardTag({ children }: PropsWithChildren) {
   return (
-    <span className="row-start-2 w-fit self-start whitespace-nowrap rounded-lg bg-neutral-100 p-1.5 text-sm font-semibold text-brand-400 md:row-start-1">
+    <span className="row-start-2 w-fit self-start whitespace-nowrap rounded-lg bg-neutral-100 p-1.5 text-sm font-semibold text-brand-400">
       {children}
     </span>
   )
