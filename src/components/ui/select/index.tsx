@@ -17,7 +17,7 @@ type handleSelectClickType = (e: MouseEvent<HTMLButtonElement>) => void
 
 interface selectedValueType {
   displayedValue: string
-  value: string
+  value: number
 }
 
 interface SelectContextType {
@@ -33,6 +33,8 @@ interface SelectContextType {
 
 interface SelectProps {
   className?: string
+  value?: number
+  onValueChange?: (value: number) => void
   children: ReactNode
 }
 
@@ -50,12 +52,12 @@ interface ArrowKeysType {
 
 const SelectContext = createContext({} as SelectContextType)
 
-export function Select({ className, children }: SelectProps) {
+export function Select({ onValueChange, className, children }: SelectProps) {
   const [isSelectOpen, setIsSelectOpen] = useState(false)
   const [selectedItemValues, setSelectedItemValues] =
     useState<selectedValueType>({
       displayedValue: '',
-      value: '',
+      value: 0,
     })
   const selectTriggerRef = useRef<HTMLButtonElement>(null)
   const selectContentRef = useRef<HTMLUListElement>(null)
@@ -70,9 +72,10 @@ export function Select({ className, children }: SelectProps) {
     e.preventDefault()
 
     const displayedValue = e.currentTarget.textContent ?? ''
-    const value = e.currentTarget.getAttribute('data-value') ?? ''
+    const value = Number(e.currentTarget.getAttribute('data-value')) ?? 0
 
     setSelectedItemValues({ displayedValue, value })
+    if (onValueChange) onValueChange(value)
     setIsSelectOpen(false)
 
     selectTriggerRef.current?.focus()

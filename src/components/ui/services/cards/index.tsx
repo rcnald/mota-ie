@@ -1,5 +1,5 @@
 import { MoveRight } from 'lucide-react'
-import { PropsWithChildren, useState } from 'react'
+import { PropsWithChildren, useMemo, useState } from 'react'
 import { areas, services } from '../../../../lib/data'
 import { Pagination } from '../pagination'
 
@@ -22,21 +22,27 @@ export function Cards({
   const firstItemPageIndex = pageIndex * perPage
   const lastItemPageIndex = firstItemPageIndex + perPage
 
-  const servicesFilteredByArea = services.filter((service) => {
-    if (filter.areaId !== 0) {
-      return service.areaId === filter.areaId
-    }
+  const servicesFilteredByArea = useMemo(() => {
+    setPageIndex(0)
+    return services.filter((service) => {
+      if (filter.areaId !== 0) {
+        return service.areaId === filter.areaId
+      }
 
-    return service
-  })
+      return service
+    })
+  }, [filter])
 
-  const servicesFilteredByQuery = servicesFilteredByArea.filter((service) => {
-    if (query !== '') {
-      return service.title.includes(query)
-    }
+  const servicesFilteredByQuery = useMemo(() => {
+    setPageIndex(0)
+    return servicesFilteredByArea.filter((service) => {
+      if (query !== '') {
+        return service.title.toLowerCase().includes(query.toLowerCase())
+      }
 
-    return service
-  })
+      return service
+    })
+  }, [query, servicesFilteredByArea])
 
   const servicesPerPage = servicesFilteredByQuery.filter((_, index) => {
     return firstItemPageIndex <= index && index < lastItemPageIndex
@@ -76,7 +82,7 @@ export function Cards({
 
 function Card({ children }: PropsWithChildren) {
   return (
-    <li className="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] place-items-start gap-3 rounded-lg border border-solid border-neutral-200 bg-neutral-50 p-6 font-raleway md:grid-cols-[auto_200px]">
+    <li className="grid h-[190px] grid-cols-[auto_1fr] grid-rows-[auto_1fr] place-items-start gap-3 rounded-lg border border-solid border-neutral-200 bg-neutral-50 p-6 font-raleway md:grid-cols-[auto_200px]">
       {children}
     </li>
   )
