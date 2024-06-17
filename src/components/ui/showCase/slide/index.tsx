@@ -18,7 +18,7 @@ export function Slide({
   children,
 }: SlideProps) {
   const slideRef = useRef<HTMLDivElement>(null)
-  const isSlideInView = useInView(slideRef)
+  const isSlideInView = useInView(slideRef,{ margin: '0px 0px -20% 0px' })
 
   const totalSlideItems = Children.count(children)
   const totalSlideItemsToShow =

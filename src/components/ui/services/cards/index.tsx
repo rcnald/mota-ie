@@ -20,7 +20,7 @@ export function Cards({
   const [pageIndex, setPageIndex] = useState(0)
 
   const firstItemPageIndex = pageIndex * perPage
-  const lastItemPageIndex = firstItemPageIndex + perPage
+  // const lastItemPageIndex = firstItemPageIndex + perPage
 
   const servicesFilteredByArea = useMemo(() => {
     setPageIndex(0)
@@ -43,10 +43,8 @@ export function Cards({
       return service
     })
   }, [query, servicesFilteredByArea])
-
-  const servicesPerPage = servicesFilteredByQuery.filter((_, index) => {
-    return firstItemPageIndex <= index && index < lastItemPageIndex
-  })
+  
+  const servicesPerPage = servicesFilteredByQuery.slice(pageIndex * perPage, pageIndex * perPage + perPage )
 
   const filteredServicesCount = servicesFilteredByQuery.length
 
