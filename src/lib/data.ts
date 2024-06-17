@@ -6,11 +6,41 @@ export interface ServicesType {
 }
 
 export const areas = [
-  { id: 1, name: 'Instalação Elétrica Residencial' },
-  { id: 2, name: 'Instalação Elétrica Predial' },
-  { id: 3, name: 'Instalação Elétrica Comercial' },
-  { id: 4, name: 'Instalação Elétrica Industrial' },
-  { id: 5, name: 'Instalação de Nobreak' },
+  {
+    id: 1,
+    name: 'Instalação Elétrica Residencial',
+    description:
+      'Evite alto consumo em sua conta de energia elétrica. Solicite uma inspeção detalhada da rede elétrica de sua residência. Realizamos desde o mais simples serviço de instalação elétrica de uma tomada, até uma inspeção completa e detalhada da rede elétrica ou troca de todo fiação elétrica.',
+    imageURL: '/01.jpg',
+  },
+  {
+    id: 2,
+    name: 'Instalação Elétrica Predial',
+    description:
+      'Estamos preparados para a elaboração e execução de projetos elétricos predial, obras em baixa tensão que seguem criteriosamente as prescrições da NBR 5410/2004 (Instalações elétricas em baixa tensão) e a NBR 5444/89 (Símbolos gráficos para instalações elétricas prediais).',
+    imageURL: '/02.jpg',
+  },
+  {
+    id: 3,
+    name: 'Instalação Elétrica Comercial',
+    description:
+      'Confie seu patrimônio na mão de especialistas. Para o desenvolvimento de projetos e na execução de serviços de instalações elétricas específicos que atendem as necessidades especiais de lojas, escritórios, bares e pequenos comércios.',
+    imageURL: '/03.jpg',
+  },
+  {
+    id: 4,
+    name: 'Instalação Elétrica Industrial',
+    description:
+      'Com o objetivo de garantir total segurança e o que há de melhor e mais moderno em instalações elétricas para indústrias, disponibilizamos para nossos clientes, uma grande estrutura tanto física como de profissionais que atendem a todo tipo de demanda de serviços de instalação elétrica industrial. e o melhor serviço especializado.',
+    imageURL: '/04.jpg',
+  },
+  {
+    id: 5,
+    name: 'Instalação de Nobreak',
+    description:
+      'Evite perdas e prejuízos desnecessários devido a quedas bruscas no fornecimento de energia elétrica. Instale hoje mesmo um nobreak em sua empresa. Trabalhamos com nobreaks que atendem todo tipo de estrutura que vai desde um pequeno escritório até grandes indústrias.',
+    imageURL: '/05.jpg',
+  },
 ]
 
 export const services: ServicesType[] = [

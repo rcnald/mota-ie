@@ -26,7 +26,6 @@ export function Pagination({
   const isFirstPage = pageIndex === 0
   const isLastPage = pageIndex === pages - 1
 
-
   const increasePageIndex = () => {
     if (pageIndex < pages - 1) {
       onPageChange((prev) => prev + 1)
@@ -54,19 +53,35 @@ export function Pagination({
           Pagina {currentPage} de {pages}
         </div>
         <div className="flex items-center gap-2">
-          <Button className="size-8 p-0" onClick={setPageIndexToFirstPage} disabled={isFirstPage}>
+          <Button
+            className="size-8 p-0"
+            onClick={setPageIndexToFirstPage}
+            disabled={isFirstPage}
+          >
             <ChevronsLeft className="size-4" />
             <span className="sr-only">Primeira pagina</span>
           </Button>
-          <Button className="size-8 p-0" onClick={decreasePageIndex} disabled={isFirstPage}>
+          <Button
+            className="size-8 p-0"
+            onClick={decreasePageIndex}
+            disabled={isFirstPage}
+          >
             <ChevronLeft className="size-4" />
             <span className="sr-only">Pagina anterior</span>
           </Button>
-          <Button className="size-8 p-0" onClick={increasePageIndex} disabled={isLastPage}>
+          <Button
+            className="size-8 p-0"
+            onClick={increasePageIndex}
+            disabled={isLastPage}
+          >
             <ChevronRight className="size-4" />
             <span className="sr-only">Proxima pagina</span>
           </Button>
-          <Button className="size-8 p-0" onClick={setPageIndexToLastPage} disabled={isLastPage}>
+          <Button
+            className="size-8 p-0"
+            onClick={setPageIndexToLastPage}
+            disabled={isLastPage}
+          >
             <ChevronsRight className="size-4" />
             <span className="sr-only">Ultima pagina</span>
           </Button>

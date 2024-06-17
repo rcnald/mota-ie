@@ -18,7 +18,7 @@ export function Slide({
   children,
 }: SlideProps) {
   const slideRef = useRef<HTMLDivElement>(null)
-  const isSlideInView = useInView(slideRef,{ margin: '0px 0px -20% 0px' })
+  const isSlideInView = useInView(slideRef, { margin: '0px 0px -20% 0px' })
 
   const totalSlideItems = Children.count(children)
   const totalSlideItemsToShow =
@@ -65,7 +65,7 @@ export function Slide({
       >
         {Children.toArray(children).map((child, index) => (
           <article
-            className="w-full min-w-[100%]  md:min-w-[650px] data-[select]:md:min-w-[740px]"
+            className="w-full min-w-[100%] md:min-w-[650px] data-[select]:md:min-w-[740px]"
             key={`slide-${index}`}
             id={`slide-${index}`}
           >

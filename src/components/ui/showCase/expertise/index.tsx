@@ -1,4 +1,5 @@
 import { ComponentProps, PropsWithChildren, ReactNode } from 'react'
+import { areas } from '../../../../lib/data'
 
 interface Expertises extends PropsWithChildren {
   expertiseItemToFocusIndex: number
@@ -9,19 +10,19 @@ interface ExpertiseProps extends ComponentProps<'li'> {
 }
 
 export function Expertises({ expertiseItemToFocusIndex }: Expertises) {
-  console.log(expertiseItemToFocusIndex)
   return (
     <ul className="flex max-w-[740px] flex-col gap-4 px-4">
-      <Expertise data-selected>
-        <ExpertiseTitle>Instalação Elétrica Residencial</ExpertiseTitle>
-        <ExpertiseDescription>
-          Evite alto consumo em sua conta de energia elétrica. Solicite uma
-          inspeção detalhada da rede elétrica de sua residência. Realizamos
-          desde o mais simples serviço de instalação elétrica de uma tomada, até
-          uma inspeção completa e detalhada da rede elétrica ou troca de todo
-          fiação elétrica
-        </ExpertiseDescription>
-      </Expertise>
+      {areas.map((area, index) => {
+        return (
+          <Expertise
+            key={area.id}
+            data-selected={index === expertiseItemToFocusIndex}
+          >
+            <ExpertiseTitle>{area.name}</ExpertiseTitle>
+            <ExpertiseDescription>{area.description}</ExpertiseDescription>
+          </Expertise>
+        )
+      })}
     </ul>
   )
 }
@@ -29,7 +30,7 @@ export function Expertises({ expertiseItemToFocusIndex }: Expertises) {
 function Expertise({ children, ...props }: ExpertiseProps) {
   return (
     <li
-      className="relative rounded-2xl p-8 data-[selected]:bg-brand-200 data-[selected]:before:absolute data-[selected]:before:h-1 data-[selected]:before:w-[calc(100%-64px)] data-[selected]:before:bg-brand-400 data-[selected]:before:content-[''] max-md:data-[selected]:before:-top-4 md:data-[selected]:before:left-0 md:data-[selected]:before:h-[calc(100%-64px)] md:data-[selected]:before:w-1"
+      className="relative order-2 rounded-2xl p-8 data-[selected=true]:order-1 data-[selected=true]:bg-brand-200 data-[selected=true]:before:absolute data-[selected=true]:before:h-1 data-[selected=true]:before:w-[calc(100%-64px)] data-[selected=true]:before:bg-brand-400 data-[selected=true]:before:content-[''] max-md:data-[selected=true]:before:-top-4 md:data-[selected=true]:before:left-0 md:data-[selected=true]:before:h-[calc(100%-64px)] md:data-[selected=true]:before:w-1"
       {...props}
     >
       {children}
