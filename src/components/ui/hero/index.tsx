@@ -16,7 +16,9 @@ import {
 } from './benefit'
 import {
   Menu,
+  MenuClose,
   MenuContent,
+  MenuGroup,
   MenuIcon,
   MenuItem,
   MenuLabel,
@@ -31,13 +33,21 @@ export function Hero() {
           <img src={Logo} alt="" />
           <Menu>
             <MenuTrigger>
-              <MenuLabel>Navegação</MenuLabel>
               <MenuIcon icon={menuIcon} className="text-brand-400 sm:hidden" />
             </MenuTrigger>
             <MenuContent>
-              <MenuItem content="Sobre" sectionId="about" />
-              <MenuItem content="Serviços" sectionId="services" />
-              <MenuItem content="Contato" sectionId="contact" />
+              <div className="hidden justify-between max-sm:group-data-[state=open]:flex max-sm:group-data-[state=open]:px-12">
+                <MenuLabel>Categorias</MenuLabel>
+                <MenuClose>
+                  <span className="sr-only">Fecha menu</span>
+                </MenuClose>
+              </div>
+
+              <MenuGroup>
+                <MenuItem content="Sobre" sectionId="about" />
+                <MenuItem content="Serviços" sectionId="services" />
+                <MenuItem content="Contato" sectionId="contact" />
+              </MenuGroup>
             </MenuContent>
           </Menu>
         </div>
@@ -52,7 +62,7 @@ export function Hero() {
               e inovadora.
             </p>
           </span>
-          <Button className="animate-pulsing">
+          <Button className="animate-pulsing duration-1000">
             <Headset />
             Entrar em contato
           </Button>
